@@ -107,7 +107,7 @@ def get_rules(img):
     X_eval = img.reshape(28, 28, 3)
 
     explanation = explainer.explain_instance(X_eval, classifier_fn=model.predict, top_labels=10, hide_color=0,
-                                             num_samples=100, segmentation_fn=segmenter)
+                                             segmentation_fn=segmenter)
 
     plt.figure(figsize=(15, 10))
 
@@ -128,6 +128,7 @@ def get_rules(img):
 
     plt.imshow(X_eval.astype(np.uint8))
     plt.imshow(mark_boundaries(image.astype(np.uint8), mask))
+    plt.axis('off')
     st.pyplot()
 
 
@@ -150,8 +151,7 @@ def get_similars(img):
     for i in range(len(pred_nearest_test)):
         plt.subplot(1, config.N_NEIGHBORS, (i + 1))
         plt.imshow(X_train[pred_nearest_test[i]].astype(np.uint8), cmap=plt.cm.binary)
-
-    plt.axis('off')
+        plt.axis('off')
 
     st.pyplot()
 
