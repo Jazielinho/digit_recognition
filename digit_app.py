@@ -18,6 +18,9 @@ from typing import Tuple
 
 import config
 
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
+
 model = None
 emb_model = None
 X_train = None
@@ -106,24 +109,26 @@ def get_rules(img):
     explanation = explainer.explain_instance(X_eval, classifier_fn=model.predict, top_labels=10, hide_color=0,
                                              num_samples=100, segmentation_fn=segmenter)
 
-    fig, m_axs = plt.subplots(2, 5, figsize=(12, 6))
+    plt.figure(figsize=(15, 10))
 
-    for i, c_ax in enumerate(m_axs.flatten()):
+    for i in range(10):
         temp, mask = explanation.get_image_and_mask(i, positive_only=True, num_features=1000, hide_rest=False,
                                                     min_weight=0.01)
-        c_ax.imshow(label2rgb(mask.astype(np.uint8), X_eval.astype(np.uint8), bg_label=0), interpolation='nearest')
-        c_ax.set_title('Positive for {}'.format(i))
-        c_ax.axis('off')
+        plt.subplot(2, 5, (i + 1))
+        plt.imshow(label2rgb(mask.astype(np.uint8), X_eval.astype(np.uint8), bg_label=0), interpolation='nearest')
+        plt.title('Positive for {}'.format(i))
+        plt.axis('off')
+
+    plt.axis('off')
+
+    st.pyplot()
 
     image, mask = explanation.get_image_and_mask(model.predict(X_eval.reshape((1, 28, 28, 3))).argmax(axis=1)[0],
                                                  positive_only=True, hide_rest=False)
-    fig, ax = plt.subplots()
 
-    ax.imshow(X_eval.astype(np.uint8))
-    ax.imshow(mark_boundaries(image.astype(np.uint8), mask))
-
-    return m_axs, ax
-    # return ax
+    plt.imshow(X_eval.astype(np.uint8))
+    plt.imshow(mark_boundaries(image.astype(np.uint8), mask))
+    st.pyplot()
 
 
 def get_similars(img):
@@ -132,7 +137,7 @@ def get_similars(img):
     global nearest_model
     global X_train
     model, emb_model = load_model()
-    emb_test = emb_model.predict(img.reshape(1, 28, 28, 3), verbose=1)
+    emb_test = emb_model.predict(img.reshape(1, 28, 28, 3), verbose=0)
     emb_test = emb_test.reshape(1, -1)
 
     X_train, nearest_model = load_nearest_model()
@@ -143,12 +148,12 @@ def get_similars(img):
     plt.figure(figsize=(15, 10))
 
     for i in range(len(pred_nearest_test)):
-        plt.subplot(1, config.N_NEIGHBORS, i)
+        plt.subplot(1, config.N_NEIGHBORS, (i + 1))
         plt.imshow(X_train[pred_nearest_test[i]].astype(np.uint8), cmap=plt.cm.binary)
 
     plt.axis('off')
 
-    return plt.show()
+    st.pyplot()
 
 
 
@@ -178,22 +183,12 @@ if canvas_result.image_data is not None:
         img = img.reshape(-1, 28, 28, 1)
         img = to_rgb(img)
 
+        st.text("Predicción")
         pred_df = predict_class(img)
         st.bar_chart(pred_df)
 
-        similares = get_similars(img)
-        st.pyplot(similares)
+        st.text("Reglas")
+        get_rules(img)
 
-        # all_rules, rules = get_rules(img)
-        # st.pyplot(all_rules.figure)
-        # st.pyplot(rules.figure)
-
-
-
-
-
-
-
-
-
-
+        st.text("Imágenes similares")
+        get_similars(img)
