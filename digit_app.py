@@ -283,4 +283,3 @@ if canvas_result.image_data is not None:
 
         st.subheader("VECINOS CERCANOS PARA BUSCAR IMÁGENES SIMILARES EN EL CONJUNTO DE ENTRENAMIENTO")
         plot_similares(img)
-
