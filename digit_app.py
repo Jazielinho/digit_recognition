@@ -125,10 +125,10 @@ def plot_rules(img):
 
     for i in range(10):
         temp, mask = explanation.get_image_and_mask(i,
-                                                   positive_only=True,
-                                                   num_features=1000,
-                                                   hide_rest=False,
-                                                   min_weight=0.01)
+                                                    positive_only=True,
+                                                    num_features=1000,
+                                                    hide_rest=False,
+                                                    min_weight=0.01)
         plt.subplot(2, 5, (i + 1))
         plt.imshow(label2rgb(mask.astype(np.uint8),
                              X_eval.astype(np.uint8),
