@@ -86,7 +86,7 @@ def predict_class(img):
     clase_predicha = int(predictions.argmax())
     prob_ = 100 * predictions[clase_predicha]
     pred_df = pd.DataFrame(predictions, index=range(10))
-    st.subheader(f"Clase predicha: {clase_predicha}, probabilidad: {prob_:.2f}")
+    st.subheader(f'Clase predicha: {clase_predicha}, probabilidad: {prob_:.2f}')
     st.bar_chart(pred_df)
 
 
@@ -125,18 +125,18 @@ def plot_rules(img):
 
     for i in range(10):
         temp, mask = explanation.get_image_and_mask(i,
-                                                   positive_only=True,
-                                                   num_features=1000,
-                                                   hide_rest=False,
-                                                   min_weight=0.01)
+                                                    positive_only=True,
+                                                    num_features=1000,
+                                                    hide_rest=False,
+                                                    min_weight=0.01)
         plt.subplot(2, 5, (i + 1))
         plt.imshow(label2rgb(mask.astype(np.uint8),
                              X_eval.astype(np.uint8),
                              bg_label=0),
-                   interpolation="nearest")
-        plt.title(f"Positivo para clase: {i}")
-        plt.axis("off")
-    plt.axis("off")
+                   interpolation='nearest')
+        plt.title(f'Positivo para clase: {i}')
+        plt.axis('off')
+    plt.axis('off')
 
     st.pyplot()
 
@@ -146,8 +146,8 @@ def plot_rules(img):
                                                  hide_rest=False)
     plt.imshow(X_eval.astype(np.uint8))
     plt.imshow(mark_boundaries(image.astype(np.uint8), mask))
-    plt.title(f"Decisiones para la clase predicha: {clase_predicha}")
-    plt.axis("off")
+    plt.title(f'Decisiones para la clase predicha: {clase_predicha}')
+    plt.axis('off')
     st.pyplot()
 
 
@@ -178,10 +178,10 @@ def plot_umap(img):
     umap_test = umap_test.reshape(1, -1)
 
     plt.figure(figsize=(12, 10))
-    sns.scatterplot(x="x0", y="x1", alpha=0.1, hue="target",
-                    legend="full", data=umap_train_df,
-                    palette="Paired_r")
-    plt.scatter(umap_test[0, 0], umap_test[0, 1], s=100, c="k")
+    sns.scatterplot(x='x0', y='x1', alpha=0.1, hue='target',
+                    legend='full', data=umap_train_df,
+                    palette='Paired_r')
+    plt.scatter(umap_test[0, 0], umap_test[0, 1], s=100, c='k')
     st.pyplot()
 
 
@@ -236,24 +236,24 @@ def plot_similares(img):
         plt.imshow(X_train[pred_nearest_test[i]].astype(np.uint8),
                    cmap=plt.cm.binary)
         plt.title(y_train[pred_nearest_test[i]])
-        plt.axis("off")
-    plt.axis("off")
+        plt.axis('off')
+    plt.axis('off')
     st.pyplot()
 
 
 # =================================================================================
 
-st.title("¡RECONOCE DÍGITOS!")
+st.title('¡RECONOCE DÍGITOS!')
 
-st.markdown("""
+st.markdown('''
 La siguiente aplicación intenta predecir el dígito escrito.
 * Usamos redes neuronales convolucionales con Tensorflow.
 * Para identificar reglas de decisión usamos LIME.
 * Para reducir dimensiones usamos UMAP.
 * Para buscar imágenes similares usamos NearestNeighbors.
-""")
+''')
 
-st.markdown("""¡ESCRIBA UN DÍGITO, INTENTARÉ PREDECIRLO!""")
+st.markdown('''¡ESCRIBA UN DÍGITO, INTENTARÉ PREDECIRLO!''')
 
 canvas_result = st_canvas(
     fill_color='#000000',
@@ -268,18 +268,18 @@ canvas_result = st_canvas(
 
 
 if canvas_result.image_data is not None:
-    if st.button("PREDECIR"):
+    if st.button('PREDECIR'):
         image_array = canvas_result.image_data.astype(np.uint8)
         img = prepara_img(image_array=image_array)
 
-        st.subheader("PREDICCIÓN")
+        st.subheader('PREDICCIÓN')
         predict_class(img)
 
-        st.subheader("LIME PARA REGLAS DE DECISIÓN")
+        st.subheader('LIME PARA REGLAS DE DECISIÓN')
         plot_rules(img)
 
-        st.subheader("UMAP PARA REDUCCIÓN DE DIMENSIONES")
+        st.subheader('UMAP PARA REDUCCIÓN DE DIMENSIONES')
         plot_umap(img)
 
-        st.subheader("VECINOS CERCANOS PARA BUSCAR IMÁGENES SIMILARES EN EL CONJUNTO DE ENTRENAMIENTO")
+        st.subheader('VECINOS CERCANOS PARA BUSCAR IMÁGENES SIMILARES EN EL CONJUNTO DE ENTRENAMIENTO')
         plot_similares(img)
